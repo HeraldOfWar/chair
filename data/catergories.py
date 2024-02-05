@@ -1,9 +1,10 @@
 from sqlalchemy import orm
 from sqlalchemy import Column, Integer, String
+from sqlalchemy_serializer import SerializerMixin
 from data.db_session import SqlAlchemyBase
 
 
-class Category(SqlAlchemyBase):
+class Category(SqlAlchemyBase, SerializerMixin):
     """Модель категории"""
     __tablename__ = 'categories'
 

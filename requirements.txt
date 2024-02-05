@@ -1,4 +1,6 @@
 SQLAlchemy==2.0.25
+SQLAlchemy-serializer==1.4.1
 boto3==1.34.34
 botocore==1.34.34
 flask==3.0.1
+Flask-RESTful===0.3.10

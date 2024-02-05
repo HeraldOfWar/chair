@@ -1,32 +1,20 @@
-import os
-import boto3
-from botocore.client import Config
-from flask import Flask
+from os import environ
+from flask import Flask, send_file
+from flask_restful import Api
+from werkzeug.security import safe_join
+
+from api import product_resources
 from data import db_session
 
-app = Flask(__name__)  # создаём приложение Flask
+
+app = Flask(__name__)  # создаем приложение
+app.config['SECRET_KEY'] = 'chair-hackaton'
+
+api = Api(app)  # создаем апи-ресурс
+api.add_resource(product_resources.ProductResource, '/api/products/<int:product_id>')  # товар
+api.add_resource(product_resources.ProductsListResource, '/api/products')  # каталог товаров
+
 db_session.global_init('db/chair.db')  # инициализируем базу данных
-port = int(os.environ.get("PORT", 8080))  # порт
-app.run(host='0.0.0.0', port=port)  # запуск
 
-
-remote_url = os.getenv('REMOTE_URL')
-minio_host = os.getenv('MINIO_HOST')
-minio_port = os.getenv('MINIO_PORT')
-minio_url = f'{minio_host}:{minio_port}'
-
-minio_user = os.getenv('MINIO_USER')
-minio_password = os.getenv('MINIO_PASSWORD')
-
-s3 = boto3.client('s3',
-                  endpoint_url=os.environ['MINIO_HOST'],
-                  aws_access_key_id=os.environ['MINIO_ROOT_USER'],
-                  aws_secret_access_key=os.environ['MINIO_ROOT_PASSWORD'],
-                  config=Config(signature_version='s3v4'))  # создали объект для управления файловым хранилищем
-
-bucket_name = 'product-images'
-
-
-@app.route('/')
-def index():
-    return 'Hello World'
+port = int(environ.get("PORT", 8080))
+app.run(host='0.0.0.0', port=port)  # запускаем сервер
